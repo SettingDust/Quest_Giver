@@ -50,8 +50,6 @@ public class EventListener {
             syncPlayerRenders(player);
     }
 
-
-
     @SubscribeEvent
     public void playerClone(PlayerEvent.Clone event) {
         /*
@@ -77,33 +75,34 @@ public class EventListener {
         StringBuilder packet = new StringBuilder();
         for (QuestNumber questNumber : data.getAllQuestLines().keySet()) {
             if (data.getQuestLine(questNumber) != null) {
-                packet.append(encodeStuff(Objects.requireNonNull(data.getQuestLine(questNumber)))).append("%");
+                packet.append(encodeStuff(Objects.requireNonNull(data.getQuestLine(questNumber))))
+                        .append("%");
                 markedNumbers.add(questNumber.id);
             }
         }
-        for(QuestNumber numbers : QuestNumber.values()) {
-            if(!markedNumbers.contains(numbers.id)) packet.append(numbers.id).append(",").append(RenderEnum.EXCLAMATION.getId()).append("%");
+        for (QuestNumber numbers : QuestNumber.values()) {
+            if (!markedNumbers.contains(numbers.id))
+                packet.append(numbers.id)
+                        .append(",")
+                        .append(RenderEnum.EXCLAMATION.getId())
+                        .append("%");
         }
         QuestGiverMod.getNetwork().sendTo(new SyncRenders(packet.substring(0, packet.length() - 1)), player);
     }
 
-
     private static String encodeStuff(QuestLineData data) {
         String id = RenderEnum.EXCLAMATION.getId();
-        if(data.checkForEnd()) {
+        if (data.checkForEnd()) {
             id = RenderEnum.NONE.getId();
-        }
-        else if(!data.getActiveQuests().isEmpty()) {
+        } else if (!data.getActiveQuests().isEmpty()) {
             id = RenderEnum.QUESTION.getId();
         }
-        return data.questNumber.id+","+id;
-
-
+        return data.questNumber.id + "," + id;
     }
 
     @SubscribeEvent
-    public static void pickupItem(PlayerEvent.ItemPickupEvent event){
-        if (event.getPlayer() instanceof  ServerPlayer player){
+    public static void pickupItem(PlayerEvent.ItemPickupEvent event) {
+        if (event.getPlayer() instanceof ServerPlayer player) {
             for (int i = 0; i < event.getStack().getCount(); i++) {
                 QuestData.get(player).checkComplete(ItemPickupTask.INSTANCE, event.getStack());
             }
@@ -129,10 +128,12 @@ public class EventListener {
     }
 
     @SubscribeEvent
-    public static void playerTick(TickEvent.PlayerTickEvent event){
+    public static void playerTick(TickEvent.PlayerTickEvent event) {
 
         // Only check one / second
-        if (event.player.tickCount % 20 == 0 && !event.player.level.isClientSide && event.player instanceof ServerPlayer player) {
+        if (event.player.tickCount % 20 == 0
+                && !event.player.level.isClientSide
+                && event.player instanceof ServerPlayer player) {
             QuestData quests = QuestData.get(player);
             // Quest Check for ItemStackTask
             player.getInventory().items.forEach(stack -> quests.checkComplete(ItemStackTask.INSTANCE, stack));
@@ -160,7 +161,6 @@ public class EventListener {
         }
     }
 
-
     @SubscribeEvent
     public static void entityInteract(PlayerInteractEvent.EntityInteract event) {
         Player player = event.getPlayer();
@@ -169,13 +169,18 @@ public class EventListener {
         Entity target = event.getTarget();
         ItemStack stack = player.getItemInHand(hand);
         if (player instanceof ServerPlayer) {
-            //Quest
-            if (target instanceof Villager villager && villager.getVillagerData().getProfession() == GuildMasterProfession.GUILDMASTER.get() && !(target instanceof QuestVillager)) {
+            // Quest
+            if (target instanceof Villager villager
+                    && villager.getVillagerData().getProfession() == GuildMasterProfession.GUILDMASTER.get()
+                    && !(target instanceof QuestVillager)) {
 
                 Component name = villager.hasCustomName() ? villager.getCustomName() : villager.getDisplayName();
 
-                QuestVillager entity = new QuestVillager(ModEntityTypes.questVillager, player.level);
-                VillagerData villagerData = new VillagerData(VillagerType.byBiome(player.level.getBiome(player.blockPosition())), GuildMasterProfession.GUILDMASTER.get(), 1);
+                QuestVillager entity = new QuestVillager(ModEntityTypes.QUEST_VILLAGER, player.level);
+                VillagerData villagerData = new VillagerData(
+                        VillagerType.byBiome(player.level.getBiome(player.blockPosition())),
+                        GuildMasterProfession.GUILDMASTER.get(),
+                        1);
                 entity.setVillagerData(villagerData);
                 entity.setCustomName(name);
                 entity.setVillagerXp(1);
@@ -186,28 +191,34 @@ public class EventListener {
                 entity.setTradingPlayer(player);
                 villager.remove(Entity.RemovalReason.DISCARDED);
 
-                interactQuest((ServerPlayer) player,hand, entity, entity.getQuestNumber());
+                interactQuest((ServerPlayer) player, hand, entity, entity.getQuestNumber());
             }
 
-            //Trading
-            if (target instanceof Villager villager && villager.getVillagerData().getProfession() != GuildMasterProfession.GUILDMASTER.get() && !(target instanceof QuestVillager)  ) {
-                if (stack.getItem() instanceof TradingContract contract && Objects.equals(contract.getProfession(),  villager.getVillagerData().getProfession().getName())
-                        && contract.isSignedByPlayer(player)){
-                        //get Discount
-                        for(MerchantOffer merchantoffer : villager.getOffers()) {
-                            merchantoffer.addToSpecialPriceDiff(-Mth.floor((float)40 * merchantoffer.getPriceMultiplier()));
-                        }
+            // Trading
+            if (target instanceof Villager villager
+                    && villager.getVillagerData().getProfession() != GuildMasterProfession.GUILDMASTER.get()
+                    && !(target instanceof QuestVillager)) {
+                if (stack.getItem() instanceof TradingContract contract
+                        && Objects.equals(
+                                contract.getProfession(),
+                                villager.getVillagerData().getProfession().getName())
+                        && contract.isSignedByPlayer(player)) {
+                    // get Discount
+                    for (MerchantOffer merchantoffer : villager.getOffers()) {
+                        merchantoffer.addToSpecialPriceDiff(
+                                -Mth.floor((float) 40 * merchantoffer.getPriceMultiplier()));
+                    }
 
                     villager.startTrading(player);
 
                 } else {
-                    //do  nothing?
+                    // do  nothing?
                     villager.playSound(SoundEvents.VILLAGER_NO, 1.0F, villager.getVoicePitch());
                     event.setCanceled(true);
                 }
             }
         }
-        //TODO add gift item to entity questTask trigger
+        // TODO add gift item to entity questTask trigger
 
         /*
         if (!event.getWorld().isClientSide && event.getPlayer() instanceof ServerPlayer) {
@@ -222,35 +233,64 @@ public class EventListener {
          */
     }
 
-    private static void interactQuest(ServerPlayer player, InteractionHand hand, QuestVillager entity, QuestNumber questNumber) {
+    private static void interactQuest(
+            ServerPlayer player, InteractionHand hand, QuestVillager entity, QuestNumber questNumber) {
 
         QuestData quests = QuestData.get(player);
 
-        if(entity.getQuestNumber()!=null) { //returns null if the villager has no profession
+        if (entity.getQuestNumber() != null) { // returns null if the villager has no profession
             if (quests.canComplete(entity.getQuestNumber())) {
-                QuestDisplay completionDisplay = Objects.requireNonNull(quests.getQuestLine(entity.getQuestNumber())).completePendingQuest();
+                QuestDisplay completionDisplay = Objects.requireNonNull(quests.getQuestLine(entity.getQuestNumber()))
+                        .completePendingQuest();
                 if (entity.getQuestTaker() == null) {
                     entity.setQuestTaker(player);
                 }
 
                 if (completionDisplay != null) {
-                    QuestGiverMod.getNetwork().channel.send(PacketDistributor.PLAYER.with(
-                            () -> player), new OpenQuestDisplaySerializer.Message(completionDisplay, false, entity.getDisplayName(), entity.getQuestNumber(), entity.blockPosition(), entity.getId()));
+                    QuestGiverMod.getNetwork()
+                            .channel
+                            .send(
+                                    PacketDistributor.PLAYER.with(() -> player),
+                                    new OpenQuestDisplaySerializer.Message(
+                                            completionDisplay,
+                                            false,
+                                            entity.getDisplayName(),
+                                            entity.getQuestNumber(),
+                                            entity.blockPosition(),
+                                            entity.getId()));
                     player.swing(hand, true);
                     playRandomVillagerSound(entity);
 
                 } else {
-                    List<SelectableQuest> active = Objects.requireNonNull(quests.getQuestLine(entity.getQuestNumber())).getQuests();
+                    List<SelectableQuest> active = Objects.requireNonNull(quests.getQuestLine(entity.getQuestNumber()))
+                            .getQuests();
 
                     if (active.size() == 1) {
-                        QuestGiverMod.getNetwork().channel.send(PacketDistributor.PLAYER.with(
-                                () -> player), new OpenQuestDisplaySerializer.Message(active.get(0).display, false, entity.getDisplayName(), entity.getQuestNumber(), entity.blockPosition(), entity.getId()));
+                        QuestGiverMod.getNetwork()
+                                .channel
+                                .send(
+                                        PacketDistributor.PLAYER.with(() -> player),
+                                        new OpenQuestDisplaySerializer.Message(
+                                                active.get(0).display,
+                                                false,
+                                                entity.getDisplayName(),
+                                                entity.getQuestNumber(),
+                                                entity.blockPosition(),
+                                                entity.getId()));
                         player.swing(hand, true);
                         playRandomVillagerSound(entity);
 
                     } else if (!active.isEmpty()) {
-                        QuestGiverMod.getNetwork().channel.send(PacketDistributor.PLAYER.with(
-                                () -> player), new OpenQuestSelectionSerializer.Message(entity.getDisplayName(), entity.getQuestNumber(), active, entity.blockPosition(), entity.getId()));
+                        QuestGiverMod.getNetwork()
+                                .channel
+                                .send(
+                                        PacketDistributor.PLAYER.with(() -> player),
+                                        new OpenQuestSelectionSerializer.Message(
+                                                entity.getDisplayName(),
+                                                entity.getQuestNumber(),
+                                                active,
+                                                entity.blockPosition(),
+                                                entity.getId()));
                         player.swing(hand, true);
                         playRandomVillagerSound(entity);
                     } else {
@@ -263,8 +303,17 @@ public class EventListener {
             } else {
                 QuestDisplay initDisplay = quests.initialize(entity.getQuestNumber());
                 if (initDisplay != null && entity.getQuestTaker() == null) {
-                    QuestGiverMod.getNetwork().channel.send(PacketDistributor.PLAYER.with(
-                            () -> player), new OpenQuestDisplaySerializer.Message(initDisplay, true, entity.getDisplayName(), entity.getQuestNumber(), entity.blockPosition(), entity.getId()));
+                    QuestGiverMod.getNetwork()
+                            .channel
+                            .send(
+                                    PacketDistributor.PLAYER.with(() -> player),
+                                    new OpenQuestDisplaySerializer.Message(
+                                            initDisplay,
+                                            true,
+                                            entity.getDisplayName(),
+                                            entity.getQuestNumber(),
+                                            entity.blockPosition(),
+                                            entity.getId()));
                     player.swing(hand, true);
                     playRandomVillagerSound(entity);
                 } else {
@@ -282,12 +331,14 @@ public class EventListener {
         }
     }
 
-    //This was made to find a Target and give a QuestNumber THIS IS NOT USED RIGHT NOW
+    // This was made to find a Target and give a QuestNumber THIS IS NOT USED RIGHT NOW
     private static Villager findTarget(Level level, Player player) {
         double distance = Double.MAX_VALUE;
-        TargetingConditions TARGETING = TargetingConditions.forNonCombat().range(8).ignoreLineOfSight();
+        TargetingConditions TARGETING =
+                TargetingConditions.forNonCombat().range(8).ignoreLineOfSight();
         Villager current = null;
-        for (Villager villager : level.getNearbyEntities(Villager.class, TARGETING, player, player.getBoundingBox().inflate(8))) {
+        for (Villager villager : level.getNearbyEntities(
+                Villager.class, TARGETING, player, player.getBoundingBox().inflate(8))) {
             if (player.distanceToSqr(villager) < distance) {
                 current = villager;
                 distance = player.distanceToSqr(villager);
@@ -296,9 +347,9 @@ public class EventListener {
         return current;
     }
 
-    protected static void playRandomVillagerSound(QuestVillager entity){
+    protected static void playRandomVillagerSound(QuestVillager entity) {
         Random random = new Random();
-        switch (random.nextInt(6)){
+        switch (random.nextInt(6)) {
             case 2 -> entity.playSound(SoundEvents.VILLAGER_TRADE, 1, 1);
             case 3 -> entity.playSound(SoundEvents.VINDICATOR_CELEBRATE, 1, 1);
             case 4 -> entity.playSound(SoundEvents.VILLAGER_YES, 1, 1);
@@ -306,5 +357,4 @@ public class EventListener {
             default -> entity.playSound(SoundEvents.VILLAGER_AMBIENT, 1, 1);
         }
     }
-
 }

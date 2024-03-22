@@ -343,8 +343,8 @@ public class QuestVillager extends Villager {
         if (!stack.isEmpty()) {
             for (final QuestLineData data :
                     QuestData.get(player).getAllQuestLines().values()) {
-                if (!player.isCreative()) stack.shrink(1);
                 if (data.checkComplete(GiftTask.INSTANCE, stack)) {
+                    if (!player.isCreative()) stack.shrink(1);
                     player.sendMessage(
                             new TranslatableComponent(
                                     "message.quest_giver.accept_gift",
