@@ -176,7 +176,7 @@ public class EventListener {
 
                 Component name = villager.hasCustomName() ? villager.getCustomName() : villager.getDisplayName();
 
-                QuestVillager entity = new QuestVillager(ModEntityTypes.QUEST_VILLAGER, player.level);
+                QuestVillager entity = new QuestVillager(ModEntityTypes.questVillager, player.level);
                 VillagerData villagerData = new VillagerData(
                         VillagerType.byBiome(player.level.getBiome(player.blockPosition())),
                         GuildMasterProfession.GUILDMASTER.get(),

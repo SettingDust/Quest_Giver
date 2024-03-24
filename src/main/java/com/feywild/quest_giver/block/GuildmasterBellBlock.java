@@ -96,7 +96,7 @@ public class GuildmasterBellBlock extends BlockBE<GuildmasterBell> {
                     }
                 }
                 // Spawn Guildmaster
-                QuestVillager entity = new QuestVillager(ModEntityTypes.QUEST_VILLAGER, level);
+                QuestVillager entity = new QuestVillager(ModEntityTypes.questVillager, level);
                 VillagerData villagerData = new VillagerData(
                         VillagerType.byBiome(level.getBiome(pos)), GuildMasterProfession.GUILDMASTER.get(), 1);
                 entity.setVillagerData(villagerData);

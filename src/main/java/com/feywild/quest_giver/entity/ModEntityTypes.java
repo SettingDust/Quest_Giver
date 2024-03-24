@@ -8,11 +8,11 @@ import net.minecraft.world.entity.MobCategory;
 @RegisterClass
 public class ModEntityTypes {
 
-    public static final EntityType<QuestVillager> QUEST_VILLAGER = EntityType.Builder.of(
+    public static final EntityType<QuestVillager> questVillager = EntityType.Builder.of(
                     QuestVillager::new, MobCategory.CREATURE)
             .build(QuestGiverMod.getInstance().modid + "_quest_villager");
 
-    public static final EntityType<QuestGuardVillager> QUEST_GUARD_VILLAGER = EntityType.Builder.of(
+    public static final EntityType<QuestGuardVillager> questGuardVillager = EntityType.Builder.of(
                     QuestGuardVillager::new, MobCategory.CREATURE)
             .build(QuestGiverMod.getInstance().modid + "_quest_guard_villager");
 }

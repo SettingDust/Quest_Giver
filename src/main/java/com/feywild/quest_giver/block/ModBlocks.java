@@ -11,7 +11,7 @@ import net.minecraft.world.level.block.state.BlockBehaviour;
 @RegisterClass
 public class ModBlocks {
 
-    public static final Block GUILDMASTER_BELL = new BlockBase(
+    public static final Block guildmasterBell = new BlockBase(
             QuestGiverMod.getInstance(),
             BlockBehaviour.Properties.copy(Blocks.CARTOGRAPHY_TABLE)
                     .strength(-1, 3600000)

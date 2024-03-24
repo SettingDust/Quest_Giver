@@ -17,7 +17,7 @@ public class ModPoiTypes {
     public static final DeferredRegister<PoiType> POI_TYPES = DeferredRegister.create(ForgeRegistries.POI_TYPES, QuestGiverMod.getInstance().modid);
 
    public static final RegistryObject<PoiType> GUILDMASTER_POI = POI_TYPES.register("guildmaster",
-           () -> new PoiType("guildmaster", PoiType.getBlockStates(ModBlocks.GUILDMASTER_BELL), 1, 1));
+           () -> new PoiType("guildmaster", PoiType.getBlockStates(ModBlocks.guildmasterBell), 1, 1));
 
    public static void register(){
        for (RegistryObject<PoiType> poi : POI_TYPES.getEntries()) {

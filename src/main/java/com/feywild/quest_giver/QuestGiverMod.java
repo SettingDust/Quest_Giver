@@ -158,12 +158,12 @@ public final class QuestGiverMod extends ModXRegistration {
             ModStructurePieces.setup();
 
             SpawnPlacements.register(
-                    ModEntityTypes.QUEST_VILLAGER,
+                    ModEntityTypes.questVillager,
                     SpawnPlacements.Type.ON_GROUND,
                     Heightmap.Types.MOTION_BLOCKING_NO_LEAVES,
                     QuestVillager::canSpawn);
             SpawnPlacements.register(
-                    ModEntityTypes.QUEST_GUARD_VILLAGER,
+                    ModEntityTypes.questGuardVillager,
                     SpawnPlacements.Type.ON_GROUND,
                     Heightmap.Types.MOTION_BLOCKING_NO_LEAVES,
                     QuestGuardVillager::canSpawn);
@@ -175,8 +175,8 @@ public final class QuestGiverMod extends ModXRegistration {
     @Override
     @OnlyIn(Dist.CLIENT)
     protected void clientSetup(FMLClientSetupEvent event) {
-        EntityRenderers.register(ModEntityTypes.QUEST_VILLAGER, VillagerRenderer::new);
-        EntityRenderers.register(ModEntityTypes.QUEST_GUARD_VILLAGER, GuardRenderer::new);
+        EntityRenderers.register(ModEntityTypes.questVillager, VillagerRenderer::new);
+        EntityRenderers.register(ModEntityTypes.questGuardVillager, GuardRenderer::new);
         MinecraftForge.EVENT_BUS.register(RenderEvents.class);
         MinecraftForge.EVENT_BUS.register(ClientEvents.class);
     }
@@ -187,9 +187,9 @@ public final class QuestGiverMod extends ModXRegistration {
     }
 
     private void entityAttributes(EntityAttributeCreationEvent event) {
-        event.put(ModEntityTypes.QUEST_VILLAGER, QuestVillager.createAttributes().build());
+        event.put(ModEntityTypes.questVillager, QuestVillager.createAttributes().build());
         event.put(
-                ModEntityTypes.QUEST_GUARD_VILLAGER,
+                ModEntityTypes.questGuardVillager,
                 QuestGuardVillager.createAttributes().build());
     }
 
