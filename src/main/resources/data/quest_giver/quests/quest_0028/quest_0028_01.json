@@ -7,7 +7,7 @@
 			"text": "So?"
 		},
 		"description": {
-			"text": "I can teach you the skill - Vampirize for 5 emeralds."
+			"text": "I can teach you the skill - Vampirize for 15 emeralds."
 		}
 	},
 	"complete": {
@@ -23,10 +23,10 @@
 			"item": "minecraft:emerald"
 		},
       "id": "quest_giver:gift",
-      "times": 5
+      "times": 15
 	}],
 	"rewards": [{
-		"command": "give @p stone",
+		"command": "give @p dirt",
 		"id": "quest_giver:command"
 	}]
 }

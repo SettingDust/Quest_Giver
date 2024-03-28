@@ -244,7 +244,7 @@ public class QuestVillager extends Villager {
     	if (player.isSecondaryUseActive()) return super.mobInteract(player, hand);
 
     	if (player instanceof ServerPlayer) {
-            if (this.tryAcceptGift((ServerPlayer) player, hand)) {
+            if (this.tryAcceptGift((ServerPlayer) player, hand, getQuestNumber())) {
                 player.swing(hand, true);
             } else {
 
@@ -338,9 +338,20 @@ public class QuestVillager extends Villager {
         }
     }
 
-    public static boolean tryAcceptGift(ServerPlayer player, InteractionHand hand) {
+    public static boolean tryAcceptGift(ServerPlayer player, InteractionHand hand, QuestNumber number) {
         ItemStack stack = player.getItemInHand(hand);
         if (!stack.isEmpty()) {
+            var questLine = QuestData.get(player).getQuestLine(number);
+            if (questLine != null && questLine.checkComplete(GiftTask.INSTANCE, stack)) {
+                if (!player.isCreative()) stack.shrink(1);
+                player.sendMessage(
+                        new TranslatableComponent(
+                                "message.quest_giver.accept_gift",
+                                player.getName().getContents()),
+                        player.getUUID());
+                return true;
+            }
+
             for (final QuestLineData data :
                     QuestData.get(player).getAllQuestLines().values()) {
                 if (data.checkComplete(GiftTask.INSTANCE, stack)) {

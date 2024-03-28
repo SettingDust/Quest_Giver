@@ -227,7 +227,7 @@ public class QuestGuardVillager extends Guard {
                 this.setQuestNumber = true;
             }
 
-            if (QuestVillager.tryAcceptGift((ServerPlayer) player, hand)) {
+            if (QuestVillager.tryAcceptGift((ServerPlayer) player, hand, getQuestNumber())) {
                 player.swing(hand, true);
             } else {
                 ItemStack stack = player.getItemInHand(hand);

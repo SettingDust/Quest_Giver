@@ -1,12 +1,12 @@
 {
   "reputation": 0,
-  "icon": "minecraft:log",
+  "icon": "minecraft:iron_sword",
   "start": {
     "title": {
       "text": "Hey!"
     },
     "description": {
-      "text": "guard test 2"
+      "text": "guard test 3"
     }
   }
 }
